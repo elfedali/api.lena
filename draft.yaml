@@ -1,0 +1,151 @@
+models:
+  Agency:
+    owner_id: id foreign:users # Owner
+    uuid: string:50 unique # Universally Unique Identifier
+    name: string:100 # Agency Name
+    slug: string:150 unique # URL Slug
+    address: string:150 nullable # Agency Address
+    help_address: string:150 nullable # Help Address
+    city: string:100 nullable # City
+    state: string:100 nullable # State
+    country: string:100 nullable # Country
+    zip_code: string:20 nullable # Zip Code
+    longitude: float nullable # Longitude
+    latitude: float nullable # Latitude
+    phone: string:20 nullable # Phone Number
+    email: string:100 nullable # Email Address
+    website: string:100 nullable # Website URL
+    logo: string nullable # Logo Path
+    cover: string nullable # Cover Image Path
+    description: text nullable # Agency Description
+    status: string:20 default:publish # publish, draft, pending, private
+    comment_status: string:20 default:closed # open, closed
+    currency: string:10 default:MAD # Currency like MAD, USD, EUR
+    relationships:
+      hasMany: Vehicle, User, Client
+      morphMany: File, Review
+
+  Vehicle:
+    created_by_id: id foreign:users # Created By User ID
+    agency_id: id foreign:agencies # Agency ID
+    make: string:50 # Manufacturer
+    model: string:50 # Model Name like "Civic" or "Accord" or "Corolla"
+    year: integer # Year of the car like 2015 or 2016
+    color: string:50 # Color of the car like "Red" or "Blue"
+    plate: string:20 # License Plate Number like "ABC-123"
+    kilometers: integer # Kilometers Driven like 10000 or 20000 or 30000
+    daily_rent: float # Daily Rent like 100.00MAD or 200.00MAD
+    comment_status: string:20 # open, closed
+    ping_status: string:20 # open, closed
+    status: string:20 # publish, draft, pending, private
+    relationships:
+      hasMany: Booking, Reservation
+      morphMany: File, Review
+
+  Client:
+    uuid: string:50 unique # Universally Unique Identifier for Clients
+    name: string:100 # Client Name
+    email: string:100 unique # Email Address
+    phone: string:20 nullable # Phone Number
+    address: string:150 nullable # Client Address
+    city: string:100 nullable # City
+    state: string:100 nullable # State
+    country: string:100 nullable # Country
+    zip_code: string:20 nullable # Zip Code
+    relationships:
+      hasMany: Booking, Reservation
+      morphMany: File
+
+  Booking:
+    uuid: string:50 unique # Universally Unique Identifier for Bookings
+    client_id: id foreign:clients # Client ID
+    vehicle_id: id foreign:vehicles # Vehicle ID
+    start_date: datetime # Start Date of Booking
+    end_date: datetime # End Date of Booking
+    total_amount: float nullable # Total Amount
+    daily_rent: float nullable # Daily Rent
+    number_of_days: integer nullable # Number of Days
+    status: string:20 default:pending # pending, approved, canceled
+    description: text nullable # Booking Description
+    payment_type: string nullable # cash, credit, debit, paypal, stripe
+    morphMany: File
+
+  Reservation:
+    uuid: string:50 unique # Universally Unique Identifier for Reservations
+    client_id: id foreign:clients # Client ID
+    vehicle_id: id foreign:vehicles # Vehicle ID
+    start_date: datetime # Start Date of Reservation
+    end_date: datetime # End Date of Reservation
+    total_amount: float nullable # Total Amount
+    status: string:20 default:pending # pending, approved, canceled
+    description: text nullable # Reservation Description
+    payment_type: string nullable # cash, credit, debit, paypal, stripe
+
+  File:
+    uploader_id: id foreign:users # Uploader User ID
+    title: string:100 # File Title
+    path: string unique # File Path
+    mime_type: string:50 # Mime Type
+    size: integer # Size of the File
+    relationships:
+      morphTo: Fileable
+
+  Review:
+    uuid: string:50 unique # Universally Unique Identifier for Reviews
+    vehicle_id: id foreign:vehicles # Vehicle ID
+    reviewer_id: id foreign:users # Reviewer User ID
+    rating: integer default:0 # Review Rating
+    review: text nullable # Review Text
+    is_approved: boolean default:false # Review Approval Status
+    approved_by_id: id foreign:users nullable # User ID who Approved the Review
+    approved_date: datetime nullable # Date of Review Approval
+    relationships:
+      morphTo: Reviewable
+
+  Plan:
+    name: string
+    slug: string
+    price: decimal
+    description: text nullable
+    is_active: boolean default:true
+    relationships:
+      hasMany: Subscription
+  Subscription:
+    user_id: id foreign:users
+    plan_id: id foreign:plans
+    start_date: datetime
+    end_date: datetime
+    relationships:
+      belongsTo: Plan
+
+  Payment:
+    user_id: id foreign:users
+    plan_id: id foreign:plans
+    amount: decimal
+    relationships:
+      belongsTo: Plan
+#
+
+# Agency:
+#   resource: api
+
+# Vehicle:
+#   resource: api
+
+# Client:
+#   resource: api
+
+# Booking:
+#   resource: api
+
+# Reservation:
+#   resource: api
+
+# File:
+#   resource: api
+
+# Review:
+#   resource: api
+
+# User:
+#   resource: api

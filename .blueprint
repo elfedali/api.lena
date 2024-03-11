@@ -1,0 +1,43 @@
+created:
+    - database/factories/AgencyFactory.php
+    - database/factories/VehicleFactory.php
+    - database/factories/ClientFactory.php
+    - database/factories/BookingFactory.php
+    - database/factories/ReservationFactory.php
+    - database/factories/FileFactory.php
+    - database/factories/ReviewFactory.php
+    - database/factories/PlanFactory.php
+    - database/factories/SubscriptionFactory.php
+    - database/factories/PaymentFactory.php
+    - database/migrations/2024_03_11_020742_create_agencies_table.php
+    - database/migrations/2024_03_11_020743_create_vehicles_table.php
+    - database/migrations/2024_03_11_020744_create_clients_table.php
+    - database/migrations/2024_03_11_020745_create_bookings_table.php
+    - database/migrations/2024_03_11_020746_create_reservations_table.php
+    - database/migrations/2024_03_11_020747_create_files_table.php
+    - database/migrations/2024_03_11_020748_create_reviews_table.php
+    - database/migrations/2024_03_11_020749_create_plans_table.php
+    - database/migrations/2024_03_11_020750_create_subscriptions_table.php
+    - database/migrations/2024_03_11_020751_create_payments_table.php
+    - app/Models/Agency.php
+    - app/Models/Vehicle.php
+    - app/Models/Client.php
+    - app/Models/Booking.php
+    - app/Models/Reservation.php
+    - app/Models/File.php
+    - app/Models/Review.php
+    - app/Models/Plan.php
+    - app/Models/Subscription.php
+    - app/Models/Payment.php
+models:
+    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, remember_token: 'string:100 nullable' }
+    Agency: { owner_id: 'id foreign:users', uuid: 'string:50 unique', name: 'string:100', slug: 'string:150 unique', address: 'string:150 nullable', help_address: 'string:150 nullable', city: 'string:100 nullable', state: 'string:100 nullable', country: 'string:100 nullable', zip_code: 'string:20 nullable', longitude: 'float nullable', latitude: 'float nullable', phone: 'string:20 nullable', email: 'string:100 nullable', website: 'string:100 nullable', logo: 'string nullable', cover: 'string nullable', description: 'text nullable', status: 'string:20 default:publish', comment_status: 'string:20 default:closed', currency: 'string:10 default:MAD', relationships: { hasMany: 'Vehicle, User, Client', morphMany: 'File, Review' } }
+    Vehicle: { created_by_id: 'id foreign:users', agency_id: 'id foreign:agencies', make: 'string:50', model: 'string:50', year: integer, color: 'string:50', plate: 'string:20', kilometers: integer, daily_rent: float, comment_status: 'string:20', ping_status: 'string:20', status: 'string:20', relationships: { hasMany: 'Booking, Reservation', morphMany: 'File, Review' } }
+    Client: { uuid: 'string:50 unique', name: 'string:100', email: 'string:100 unique', phone: 'string:20 nullable', address: 'string:150 nullable', city: 'string:100 nullable', state: 'string:100 nullable', country: 'string:100 nullable', zip_code: 'string:20 nullable', relationships: { hasMany: 'Booking, Reservation', morphMany: File } }
+    Booking: { uuid: 'string:50 unique', client_id: 'id foreign:clients', vehicle_id: 'id foreign:vehicles', start_date: datetime, end_date: datetime, total_amount: 'float nullable', daily_rent: 'float nullable', number_of_days: 'integer nullable', status: 'string:20 default:pending', description: 'text nullable', payment_type: 'string nullable', morphMany: File }
+    Reservation: { uuid: 'string:50 unique', client_id: 'id foreign:clients', vehicle_id: 'id foreign:vehicles', start_date: datetime, end_date: datetime, total_amount: 'float nullable', status: 'string:20 default:pending', description: 'text nullable', payment_type: 'string nullable' }
+    File: { uploader_id: 'id foreign:users', title: 'string:100', path: 'string unique', mime_type: 'string:50', size: integer, relationships: { morphTo: Fileable } }
+    Review: { uuid: 'string:50 unique', vehicle_id: 'id foreign:vehicles', reviewer_id: 'id foreign:users', rating: 'integer default:0', review: 'text nullable', is_approved: 'boolean default:false', approved_by_id: 'id foreign:users nullable', approved_date: 'datetime nullable', relationships: { morphTo: Reviewable } }
+    Plan: { name: string, slug: string, price: decimal, description: 'text nullable', is_active: 'boolean default:true', relationships: { hasMany: Subscription } }
+    Subscription: { user_id: 'id foreign:users', plan_id: 'id foreign:plans', start_date: datetime, end_date: datetime, relationships: { belongsTo: Plan } }
+    Payment: { user_id: 'id foreign:users', plan_id: 'id foreign:plans', amount: decimal, relationships: { belongsTo: Plan } }
