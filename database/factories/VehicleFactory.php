@@ -25,16 +25,16 @@ class VehicleFactory extends Factory
         return [
             'created_by_id' => User::factory(),
             'agency_id' => Agency::factory(),
-            'make' => $this->faker->regexify('[A-Za-z0-9]{50}'),
-            'model' => $this->faker->regexify('[A-Za-z0-9]{50}'),
-            'year' => $this->faker->numberBetween(-10000, 10000),
-            'color' => $this->faker->regexify('[A-Za-z0-9]{50}'),
-            'plate' => $this->faker->regexify('[A-Za-z0-9]{20}'),
-            'kilometers' => $this->faker->numberBetween(-10000, 10000),
-            'daily_rent' => $this->faker->randomFloat(0, 0, 9999999999.),
-            'comment_status' => $this->faker->regexify('[A-Za-z0-9]{20}'),
-            'ping_status' => $this->faker->regexify('[A-Za-z0-9]{20}'),
-            'status' => $this->faker->regexify('[A-Za-z0-9]{20}'),
+            'make' => $this->faker->randomElement(['Toyota', 'Ford', 'Chevrolet', 'Nissan', 'Honda']),
+            'model' => $this->faker->randomElement(['Corolla', 'Fiesta', 'Cruze', 'Sentra', 'Civic']),
+            'year' => $this->faker->year(),
+            'color' => $this->faker->colorName(),
+            'plate' => $this->faker->randomElement(['ABC-123', 'DEF-456', 'GHI-789', 'JKL-012', 'MNO-345']),
+            'kilometers' => $this->faker->randomFloat(0, 0, 120000.),
+            'daily_rent' => $this->faker->randomFloat(2, 0, 2000),
+            'comment_status' => $this->faker->randomElement(['open', 'closed', 'private']),
+            'ping_status' => $this->faker->randomElement(['open', 'closed']),
+            'status' => $this->faker->randomElement(['active', 'inactive', 'pending']),
         ];
     }
 }
